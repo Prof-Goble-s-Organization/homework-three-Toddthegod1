@@ -1,4 +1,4 @@
-package structures.objects;
+package hw03;
 
 /**
  * Interface specifying a Queue ADT

@@ -1,6 +1,4 @@
-
-import hw03.CS232ArrayList;
-import hw03.CS232Stack;
+package hw03;
 
 public class CS232ArrayStack implements CS232Stack<Object> {
 private CS232ArrayList list;

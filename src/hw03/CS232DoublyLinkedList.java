@@ -2,7 +2,8 @@ package hw03;
 
 import java.lang.classfile.components.ClassPrinter;
 import java.util.Currency;
-import java.util.concurrent.ConcurrentHashMap;
+
+
 
 /**
  * Doubly linked list implementation of the CS232List interface.
@@ -47,7 +48,6 @@ public class CS232DoublyLinkedList<E> implements CS232List<E> {
 		DLLNode node = new DLLNode(element, pred, tail);
 		pred.next = node;
 		tail.prev = node;
-
 		size++;
 	}
 
@@ -137,7 +137,7 @@ public class CS232DoublyLinkedList<E> implements CS232List<E> {
 	 */
 	public void clearTo(int index) throws IndexOutOfBoundsException {
 		for (int i = 0; i < index; i++) {
-			DLLNode 
+			DLLNode currentDLLNode = 
 		}
 		// Intentionally not implemented.
 	}

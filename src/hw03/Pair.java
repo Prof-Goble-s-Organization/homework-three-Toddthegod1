@@ -1,3 +1,4 @@
+package hw03;
 public class Pair <T, U> {
     private T first;
     private U second;
