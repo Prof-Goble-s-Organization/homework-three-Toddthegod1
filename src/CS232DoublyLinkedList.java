@@ -1,5 +1,9 @@
 package hw03;
 
+import java.lang.classfile.components.ClassPrinter;
+import java.util.Currency;
+import java.util.concurrent.ConcurrentHashMap;
+
 /**
  * Doubly linked list implementation of the CS232List interface.
  * 
@@ -115,7 +119,11 @@ public class CS232DoublyLinkedList<E> implements CS232List<E> {
 	 */
 	public E remove(int index) throws IndexOutOfBoundsException {
 		// Intentionally not implemented.
-		return null;
+		DLLNode node = getNode(index);
+		node.prev.next = node.next;
+		node.next.prev = node.prev;
+		size--;
+		return node.element;
 	}
 
 	/**
@@ -128,6 +136,9 @@ public class CS232DoublyLinkedList<E> implements CS232List<E> {
 	 *             if index < 0 or index >= size()
 	 */
 	public void clearTo(int index) throws IndexOutOfBoundsException {
+		for (int i = 0; i < index; i++) {
+			DLLNode 
+		}
 		// Intentionally not implemented.
 	}
 
