@@ -124,20 +124,18 @@ public class CS232IterableDoublyLinkedList<E> implements CS232List<E>,
 	 */
     @Override
 	public E remove(int index) throws IndexOutOfBoundsException {
-		if (index > 0 || index > size() ) {
+		if (index < 0 || index >= size() ) {
 			throw new IndexOutOfBoundsException();
 		}
-		else {
 			DLLNode nodeToRemove = getNode(index);
 			E element = nodeToRemove.element;
 
 			nodeToRemove.prev.next = nodeToRemove.next;
 			nodeToRemove.next.prev = nodeToRemove.prev;
-
+			
 			size--;
 
 			return element;
-		}
 	}
 
 	/*
@@ -175,30 +173,34 @@ public class CS232IterableDoublyLinkedList<E> implements CS232List<E>,
 	public class DLLIterator implements CS232Iterator<E> {
 
 		private DLLNode cursor;
+		private boolean canRemove = false;
+		private boolean lastMoveWasNext;
 
 		public DLLIterator() {
 			cursor = head;
 		}
 
-                @Override
+        @Override
 		public boolean hasNext() {
 			return cursor.next != tail;
 		}
 
-                @Override
+        @Override
 		public E next() {
 			if (!hasNext()) {
 				throw new NoSuchElementException("There is no next element.");
 			} 
 			else {
 				cursor = cursor.next;
+				canRemove = true;
+				lastMoveWasNext = true;
 				return cursor.element;
 			}
 		}
 
         @Override
 		public boolean hasPrevious() {
-			return cursor.prev != head;
+			return cursor.prev != null;
 		}
 
         @Override
@@ -206,11 +208,10 @@ public class CS232IterableDoublyLinkedList<E> implements CS232List<E>,
 			if (!hasPrevious()) {
 				throw new NoSuchElementException("There is no previous element");
 			}
-
-			else {
 				cursor = cursor.prev;
-				return cursor.element;
-			}
+				canRemove = true;
+				lastMoveWasNext = false;
+				return cursor.next.element;
 		}
 
 		@Override
@@ -224,21 +225,29 @@ public class CS232IterableDoublyLinkedList<E> implements CS232List<E>,
 
 		@Override
 		public E remove() {
-			if (cursor == head || cursor == tail) {
-				throw new IllegalStateException("Cannot remove from an empty list or before calling next/previous.");
+			if (!canRemove) {
+				throw new IllegalStateException();
 			}
-		
 			E element = cursor.element;
 			cursor.prev.next = cursor.next;
 			cursor.next.prev = cursor.prev;
-			cursor = cursor.prev; 
+
+			if (lastMoveWasNext) {
+				cursor = cursor.prev;
+			} else {
+				cursor = cursor.next;
+			}
 		
 			size--;
+			canRemove = false;
 			return element;
 		}
 		
 	
-		/**
+		
+	}
+
+    /**
 		 * Helper method for testing that checks that all of the links are
 		 * symmetric.
 		 * 
@@ -265,5 +274,4 @@ public class CS232IterableDoublyLinkedList<E> implements CS232List<E>,
 			}
 			return true;
 		}
-	}
 }
