@@ -69,7 +69,7 @@ public class CS232DoublyLinkedList<E> implements CS232List<E> {
 	 * Helper method that throws an exception if the index is not valid.
 	 */
 	private void checkBounds(int index) {
-		if (index < 0 || index >= size) {
+		if (index < 0 || index > size) {
 			throw new IndexOutOfBoundsException("Invalid index: " + index
 					+ " on List of size " + size + ".");
 		}
@@ -78,6 +78,7 @@ public class CS232DoublyLinkedList<E> implements CS232List<E> {
 	/**
 	 * {@inheritDoc}
 	 */
+    @Override
 	public E get(int index) throws IndexOutOfBoundsException {
 		DLLNode node = getNode(index);
 		return node.element;
@@ -86,6 +87,7 @@ public class CS232DoublyLinkedList<E> implements CS232List<E> {
 	/**
 	 * {@inheritDoc}
 	 */
+    @Override
 	public void set(int index, E element) throws IndexOutOfBoundsException {
 		DLLNode node = getNode(index);
 		node.element = element;
@@ -94,6 +96,7 @@ public class CS232DoublyLinkedList<E> implements CS232List<E> {
 	/**
 	 * {@inheritDoc}
 	 */
+    @Override
 	public void insert(int index, E element) throws IndexOutOfBoundsException {
 		/*
 		 * If the index is passed the end of the list, then tail will succeed
@@ -117,8 +120,11 @@ public class CS232DoublyLinkedList<E> implements CS232List<E> {
 	/**
 	 * {@inheritDoc}
 	 */
+    @Override
 	public E remove(int index) throws IndexOutOfBoundsException {
-		// Intentionally not implemented.
+		if (index < 0 || index >= size) {
+			throw new IndexOutOfBoundsException("Index out of bounds");
+		}                // checkBounds wasn't working here for some reason
 		DLLNode node = getNode(index);
 		node.prev.next = node.next;
 		node.next.prev = node.prev;
@@ -136,10 +142,18 @@ public class CS232DoublyLinkedList<E> implements CS232List<E> {
 	 *             if index < 0 or index >= size()
 	 */
 	public void clearTo(int index) throws IndexOutOfBoundsException {
-		for (int i = 0; i < index; i++) {
-			DLLNode currentDLLNode = 
+		if (index < 0 || index >= size) {
+			throw new IndexOutOfBoundsException("Index out of bounds");
+		}                  // checkBounds() wasn't working here
+		DLLNode node = getNode(index);
+		head.next = node.next;
+		if (node.next != null) {
+			node.next.prev = head;
 		}
-		// Intentionally not implemented.
+		else {
+			tail.prev = head;
+		}
+		size -= (index + 1);
 	}
 
 	/**
@@ -160,7 +174,33 @@ public class CS232DoublyLinkedList<E> implements CS232List<E> {
 	 */
 	public void addAllAt(int index, CS232DoublyLinkedList<E> list)
 			throws IndexOutOfBoundsException {
-		// Intentionally not implemented.
+				checkBounds(index);
+				if (list.size() == 0) {
+					throw new IllegalArgumentException();
+				}
+				if (index < 0 || index > size) {
+					throw new IndexOutOfBoundsException();
+				}
+				DLLNode cur = getNode(index);
+				if (index == size) {
+					cur = tail;
+				}
+				else {
+					cur = getNode(index);
+				}
+				DLLNode prev = cur.prev;
+
+				DLLNode listHead = list.head.next;
+				DLLNode listTail = list.tail.prev;
+
+				prev.next = listHead;
+				listHead.prev = prev;
+
+				listTail.next = cur;
+				cur.prev = listTail;
+
+				size += list.size();
+ 		// Intentionally not implemented
 	}
 
 	/*
@@ -210,3 +250,4 @@ public class CS232DoublyLinkedList<E> implements CS232List<E> {
 		return true;
 	}
 }
+

@@ -77,6 +77,7 @@ public class CS232IterableDoublyLinkedList<E> implements CS232List<E>,
 	/**
 	 * {@inheritDoc}
 	 */
+    @Override
 	public E get(int index) throws IndexOutOfBoundsException {
 		DLLNode node = getNode(index);
 		if (node != null) {
@@ -89,6 +90,7 @@ public class CS232IterableDoublyLinkedList<E> implements CS232List<E>,
 	/**
 	 * {@inheritDoc}
 	 */
+    @Override
 	public void set(int index, E element) throws IndexOutOfBoundsException {
 		DLLNode node = getNode(index);
 		node.element = element;
@@ -97,6 +99,7 @@ public class CS232IterableDoublyLinkedList<E> implements CS232List<E>,
 	/**
 	 * {@inheritDoc}
 	 */
+    @Override
 	public void insert(int index, E element) throws IndexOutOfBoundsException {
 		/*
 		 * If the list is empty then tail will succeed (appear immediately
@@ -119,9 +122,22 @@ public class CS232IterableDoublyLinkedList<E> implements CS232List<E>,
 	/**
 	 * {@inheritDoc}
 	 */
+    @Override
 	public E remove(int index) throws IndexOutOfBoundsException {
-		// Intentionally not implemented... see HW assignment!
-		return null;
+		if (index > 0 || index > size() ) {
+			throw new IndexOutOfBoundsException();
+		}
+		else {
+			DLLNode nodeToRemove = getNode(index);
+			E element = nodeToRemove.element;
+
+			nodeToRemove.prev.next = nodeToRemove.next;
+			nodeToRemove.next.prev = nodeToRemove.prev;
+
+			size--;
+
+			return element;
+		}
 	}
 
 	/*
@@ -147,6 +163,8 @@ public class CS232IterableDoublyLinkedList<E> implements CS232List<E>,
 	/**
 	 * {@inheritDoc}
 	 */
+        
+        @Override
 	public CS232Iterator<E> getIterator() {
 		return new DLLIterator();
 	}
@@ -154,7 +172,7 @@ public class CS232IterableDoublyLinkedList<E> implements CS232List<E>,
 	/*
 	 * Iterator implementation for the doubly linked list.
 	 */
-	private class DLLIterator implements CS232Iterator<E> {
+	public class DLLIterator implements CS232Iterator<E> {
 
 		private DLLNode cursor;
 
@@ -162,29 +180,40 @@ public class CS232IterableDoublyLinkedList<E> implements CS232List<E>,
 			cursor = head;
 		}
 
+                @Override
 		public boolean hasNext() {
 			return cursor.next != tail;
 		}
 
+                @Override
 		public E next() {
 			if (!hasNext()) {
 				throw new NoSuchElementException("There is no next element.");
-			} else {
+			} 
+			else {
 				cursor = cursor.next;
 				return cursor.element;
 			}
 		}
 
+        @Override
 		public boolean hasPrevious() {
-			// Intentionally not implemented, see HW assignment!
-			throw new UnsupportedOperationException("Not implemented");
+			return cursor.prev != head;
 		}
 
+        @Override
 		public E previous() {
-			// Intentionally not implemented, see HW assignment!
-			throw new UnsupportedOperationException("Not implemented");
+			if (!hasPrevious()) {
+				throw new NoSuchElementException("There is no previous element");
+			}
+
+			else {
+				cursor = cursor.prev;
+				return cursor.element;
+			}
 		}
 
+		@Override
 		public void insert(E element) {
 			DLLNode node = new DLLNode(element, cursor, cursor.next);
 			cursor.next.prev = node;
@@ -193,36 +222,48 @@ public class CS232IterableDoublyLinkedList<E> implements CS232List<E>,
 			size++;
 		}
 
+		@Override
 		public E remove() {
-			// Intentionally not implemented, see HW assignment!
-			throw new UnsupportedOperationException("Not implemented");
-		}
-	}
-	
-	/**
-	 * Helper method for testing that checks that all of the links are
-	 * symmetric.
-	 * 
-	 * @return true if all of the links are correct.
-	 */
-	public boolean checkListIntegrity() {
-		if (size == 0) {
-			return head.next == tail && tail.prev == head;
-		} else {
-			DLLNode cur = head.next;
-
-			while (cur.next != tail) {
-
-				DLLNode prev = cur.prev;
-				DLLNode next = cur.next;
-
-				if (prev.next != cur || next.prev != cur) {
-					return false;
-				}
-
-				cur = cur.next;
+			if (cursor == head || cursor == tail) {
+				throw new IllegalStateException("Cannot remove from an empty list or before calling next/previous.");
 			}
+		
+			E element = cursor.element;
+			cursor.prev.next = cursor.next;
+			cursor.next.prev = cursor.prev;
+			cursor = cursor.prev; 
+		
+			size--;
+			return element;
 		}
-		return true;
+		
+	
+		/**
+		 * Helper method for testing that checks that all of the links are
+		 * symmetric.
+		 * 
+		 * @return true if all of the links are correct.
+		 */
+		public boolean checkListIntegrity() {
+			if (size == 0) {
+				return head.next == tail && tail.prev == head;
+			} 
+			else {
+				DLLNode cur = head.next;
+
+				while (cur.next != tail) {
+
+					DLLNode prev = cur.prev;
+					DLLNode next = cur.next;
+
+					if (prev.next != cur || next.prev != cur) {
+						return false;
+					}
+
+					cur = cur.next;
+				}
+			}
+			return true;
+		}
 	}
 }
