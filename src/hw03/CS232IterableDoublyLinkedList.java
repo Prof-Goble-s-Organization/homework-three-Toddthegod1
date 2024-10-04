@@ -228,19 +228,25 @@ public class CS232IterableDoublyLinkedList<E> implements CS232List<E>,
 			if (!canRemove) {
 				throw new IllegalStateException();
 			}
-			E element = cursor.element;
-			cursor.prev.next = cursor.next;
-			cursor.next.prev = cursor.prev;
 
-			if (lastMoveWasNext) {
-				cursor = cursor.prev;
-			} else {
-				cursor = cursor.next;
-			}
-		
 			size--;
 			canRemove = false;
-			return element;
+
+			if (lastMoveWasNext) {
+				E element = cursor.element;
+				cursor.prev.next = cursor.next;
+				cursor.next.prev = cursor.prev;
+
+				cursor = cursor.prev;
+				return element;
+			} else {
+				E element = cursor.next.element;
+				cursor.next.next.prev = cursor;
+				cursor.next = cursor.next.next;
+
+				// cursor = cursor.next;
+				return element;
+			}
 		}
 		
 	
