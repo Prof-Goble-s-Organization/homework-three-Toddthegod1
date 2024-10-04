@@ -1,5 +1,7 @@
 package hw03;
 
+import java.util.NoSuchElementException;
+
 /**
  * An implementation of the CS132List interface backed with an array of Objects.
  * 
@@ -7,7 +9,7 @@ package hw03;
  * @author Dickinson College
  * @version Feb 18, 2016
  */
-public class CS232ArrayList<E> implements CS232List<E> {
+public class CS232ArrayList<E> implements CS232List<E>, CS232Iterable {
 
     private static final int INITIAL_CAPACITY = 10;
 
@@ -33,7 +35,7 @@ public class CS232ArrayList<E> implements CS232List<E> {
      * {@inheritDoc}
      */
     public E get(int index) throws IndexOutOfBoundsException {
-        if (index < 0 || index >= currentSize) {
+        if (index < 0 || index > currentSize) {
             throw new IndexOutOfBoundsException("accessed " + index + " but size is " + currentSize);
         }
         else {
@@ -143,5 +145,56 @@ public class CS232ArrayList<E> implements CS232List<E> {
 
             return elem;
         }
+    }
+
+    @Override
+    public CS232Iterator getIterator() {
+        return new ArrayListIterator();
+    }
+
+    private class ArrayListIterator implements CS232Iterator {
+        int cursor = 0;
+        @Override
+        public boolean hasNext() {
+            return cursor < currentSize;
+        }
+
+        @Override
+        public Object next() {
+            if (!hasNext()) {
+                throw new NoSuchElementException("There is no next");
+            }
+            else {
+                cursor++;
+                return get(cursor-1);
+            }
+        }
+
+        @Override
+        public boolean hasPrevious() {
+            return cursor > 0;
+        }
+
+        @Override
+        public Object previous() {
+            if (!hasPrevious()) {
+                throw new NoSuchElementException("There is no previous");
+            }
+            else {
+                cursor--;
+                return get(cursor);
+            }
+        }
+
+        @Override
+        public void insert(Object element) {
+            throw new UnsupportedOperationException("Unimplemented method 'insert'");
+        }
+
+        @Override
+        public Object remove() {
+            throw new UnsupportedOperationException("Unimplemented method 'remove'");
+        }
+
     }
 }
